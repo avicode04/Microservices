@@ -5,14 +5,16 @@ import com.stackroute.domain.User;
 import com.stackroute.exception.UserAlreadyExistException;
 import com.stackroute.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/v1/userservice")
+@RequestMapping(value = "api/v1")
 public class UserController {
 
 
@@ -23,31 +25,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/saveuser")
-    public ResponseEntity<?> saveUser(@RequestBody User user){
-        ResponseEntity responseEntity;
-        try {
-            userService.saveUser(user);
-            responseEntity = new ResponseEntity<String>("Successfully Created", HttpStatus.CREATED);
-        } catch (UserAlreadyExistException e) {
-            System.out.println("msg" + e.getMessage());
-            responseEntity = new ResponseEntity<String>(e.getMessage(),HttpStatus.CONFLICT);
-            e.printStackTrace();
-            }
-
-            //responseEntity = new ResponseEntity<String>("Successfully Created", HttpStatus.CREATED);
-       return responseEntity;
-
+    @RequestMapping(value = "/echoUserName/{name}")
+    public String echoUserName(@PathVariable(name = "name") String name)
+    {
+        return "hello  <strong style=\"color: red;\">" + name + " </strong> Responsed on : " + new Date();
     }
 
-
-    @GetMapping("/getAllUsers")
-    public ResponseEntity<?>getAllUser(){
-
-      return new ResponseEntity<List<User>>(userService.getAllUser() , HttpStatus.OK);
+    @RequestMapping(value = "/getUserDetails/{name}")
+    public User getUserDetails(@PathVariable(name = "name") String name)
+    {
+        return new User(name, "last-name", 20, "new user", 1);
     }
 
-
+    public static void main(String[] args)
+    {
+        SpringApplication.run(UserController.class, args);
+    }
 
 
 }
